@@ -1,0 +1,33 @@
+name: Jenkins Initial Setup
+
+on:
+  push:
+    branches: [main]  # Replace with your default branch if different
+  pull-request:
+    branches: [main]  # Replace with your default branch if different
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up SSH key
+        uses: ssh-agent-action@v0.6.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: SSH and Pull Repository
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@serverA << 'EOF'
+            cd /path/to/your/repo
+            git pull origin main  # Replace with your branch if different
+          EOF
+
+      - name: Build and Start Jenkins
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@serverA << 'EOF'
+            cd /path/to/your/repo
+            docker compose up -d --build
+          EOF
