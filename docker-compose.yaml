@@ -2,7 +2,8 @@ version: '3'
 
 services:
   jenkins:
-    image: jenkins/jenkins:lts
+    build:
+      context: ./compose/jenkins
     restart: always
     privileged: true
     user: root
